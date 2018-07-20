@@ -36,6 +36,7 @@ class Pyboot(PybootServer):
             tftpd = Tftpd()
             dhcpd.init(self.config)
             tftpd.init(self.config)
+            print('')
 
             while True:
                 rlist = [ dhcpd.sock, tftpd.sock ]
@@ -68,7 +69,11 @@ if __name__ == '__main__':
         parser.add_argument('--boot',            metavar='<file name>',  help='Tftp boot file       (default: "/pxelinux.0")')
         parser.add_argument('-t', '--tftproot',  metavar='<path>',       help='Tftp root directory  (default: "./tftproot")')
         parser.add_argument('-i', '--interface', metavar='<interface>',  help='Network interface    (e.g. eth0, en0, bridge001,...)')
+        parser.add_argument('-l', '--list', action='store_const', const=1, help='List network interfaces')
         config = parser.parse_args()
+        if config.list:
+            PybootServer().detect_interfaces()
+            sys.exit(0)
         pyboot = Pyboot()
         pyboot.init(config)
         pyboot.run()
