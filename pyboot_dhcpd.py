@@ -154,11 +154,15 @@ class Dhcpd(PybootServer):
         return self.sock.recvfrom(length)
 
     def sendto(self, contents, remote):
-        return self.sock.sendto(contents, 0, remote)
+        try:
+            return self.sock.sendto(contents, 0, remote)
+        except Exception as e:
+            print('Error:', e)
 
     def get_response(self, req ):
         r = ''
         logs = []
+        logs += ['Client IP: ' + self.ipaddr]
         try:
             for opt in req.options[OPTIONS.DHCPOPTIONS]:
                 opt = ord(opt)
@@ -209,10 +213,10 @@ class Dhcpd(PybootServer):
         response = chr(opt)
         value = ''
         if opt == OPTIONS.NETMASK:
-            logs += ['Subnet: ' + self.netmask]
+            logs += ['Mask: ' + self.netmask]
             value = struct.pack( '4s', socket.inet_aton( self.netmask ) )
         elif opt == OPTIONS.GATEWAY:
-            logs += ['Router: ' + self.gateway]
+            logs += ['Gateway: ' + self.gateway]
             value = struct.pack( '4s', socket.inet_aton( self.gateway ) )
         elif opt == OPTIONS.DNS:
             logs += ['Dns1: ' + self.dns]
@@ -229,7 +233,7 @@ class Dhcpd(PybootServer):
             value = self.domain
         elif opt == OPTIONS.BOOTFILE:
             logs += ['Boot file: ' + self.bootfile]
-            value = self.bootfile
+            value = self.bootfile + '\0'
         elif opt == OPTIONS.BROADCASTADDR:
             logs += ['Broadcast Address: ' + self.broadcast]
             value = struct.pack( '4s', socket.inet_aton( self.broadcast ) )

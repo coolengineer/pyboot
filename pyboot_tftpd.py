@@ -172,7 +172,7 @@ class Tftpd(PybootServer):
             content = ctx.file.read( ctx.blksize )
             arg = ctx.blknum
             #print('tftpd: Sending up to %d bytes' % ( pos + len(content) ))
-            if ctx.blknum % 100 == 0:
+            if ctx.blknum % 400 == 0:
                 print('')
             elif ctx.blknum % 4 == 0:
                 print('.', end='')

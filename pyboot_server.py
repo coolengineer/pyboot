@@ -82,7 +82,8 @@ class PybootServer(object):
     def detect_interfaces(self, show=True):
         uname =  os.uname()[0]
 
-        max_devices = 32
+        # max_devices should be under 32(for 1KB), but 48 is ok in my machine
+        max_devices = 48
         if uname == 'Linux':
             SIOCGIFCONF = 0x8912
             ifsize = 40
